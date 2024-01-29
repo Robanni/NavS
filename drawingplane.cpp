@@ -30,7 +30,6 @@ void DrawingPlane::paintEvent(QPaintEvent *)
     float XY = 2;
     if(!_trajectoryPoints.empty())XY = pow((_trajectoryPoints.last().x() - _tractorPosVector.toPointF().x()),2)
                + pow((_trajectoryPoints.last().y() - _tractorPosVector.toPointF().y()),2);
-    qDebug()<<"size:  "<<_trajectoryPoints.size();
 
     if(XY>1)
         _trajectoryPoints.append(QPointF(_tractorPosVector.toPointF()));
@@ -159,7 +158,7 @@ void DrawingPlane::CalculateIntersection()
     }
     qDebug()<<"**************************************************";
     qDebug()<<finalPoints.count();
-    qDebug()<<"*------------------------------------------------*";
+    qDebug()<<"**************************************************";
 
 
 
@@ -177,10 +176,14 @@ void DrawingPlane::CalculateIntersection()
         if(QLineF(finalTwoPoints[0],lastPos).length()>QLineF(finalTwoPoints[1],lastPos).length()) std::swap(finalTwoPoints[0],finalTwoPoints[1]);
     }
 
-    qDebug()<<"*----------------------left--------------------------*";
-    qDebug()<<QLineF(finalTwoPoints[0],lastPos).length()<<"   "<<QLineF(finalTwoPoints[1],lastPos).length();
-    qDebug()<<"*----------------------left--------------------------*";
+    qDebug()<<"*------------------------------------------------*";
+    qDebug()<<"line dist : "<<QLineF(finalTwoPoints[0],lastPos).length()<<"   "<<QLineF(finalTwoPoints[1],lastPos).length();
+    qDebug()<<"btw dist: "<<QLineF(finalTwoPoints[1],finalTwoPoints[0]).length();
+    qDebug()<<"main dist : "<<QLineF(QLineF(finalTwoPoints[1],finalTwoPoints[0]).center(),lastPos).length();
+    qDebug()<<"*------------------------------------------------*";
 
+
+    /* линейная инторполяция(не работает)
     double a=0,b=0,dist=0;
     a = (finalTwoPoints[1].y() - finalTwoPoints[0].y())/(finalTwoPoints[1].x() - finalTwoPoints[0].x());
 
@@ -192,8 +195,9 @@ void DrawingPlane::CalculateIntersection()
     QPointF last = finalTwoPoints[0];
     for (int var = 1; var < 10; var++)
     {
-        qDebug()<<"y = "<<a*(finalTwoPoints[0].x() + dist*var) + b;
+        qDebug()<<"y = "<<a*(finalTwoPoints[0].x() + dist*var) + b << "      x ="<<finalTwoPoints[0].x() + dist*var;
     }
+    */
 }
 
 // slots
