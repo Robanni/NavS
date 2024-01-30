@@ -15,6 +15,7 @@ SOURCES += \
 
 HEADERS += \
     drawingplane.h \
+    supportfunctions.h \
     widget.h
 
 # Default rules for deployment.

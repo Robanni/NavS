@@ -1,4 +1,5 @@
 ﻿#include "drawingplane.h"
+#include "supportfunctions.h"
 
 DrawingPlane::DrawingPlane(QWidget *parent)
     : QWidget{parent}
@@ -152,7 +153,7 @@ void DrawingPlane::CalculateIntersection()
         qDebug()<<"vec two:  "<<vecTwo;
         qDebug()<<"cos:  "<< cosB;
         }*/
-        if(cosB >= -0.2 && cosB <= 0.2) finalPoints.append(_trajectoryPoints[var]);
+        if(cosB >= -0.4 && cosB <= 0.4) finalPoints.append(_trajectoryPoints[var]);
 
 
     }
@@ -167,19 +168,22 @@ void DrawingPlane::CalculateIntersection()
     finalPoints[0] = finalTwoPoints[0];
     finalPoints[1] = finalTwoPoints[1];
 
-    if(QLineF(finalTwoPoints[0],lastPos).length()>QLineF(finalTwoPoints[1],lastPos).length()) std::swap(finalTwoPoints[0],finalTwoPoints[1]);
+    if(sf::GetDistanceBetweenPoints(finalTwoPoints[0],lastPos) > sf::GetDistanceBetweenPoints(finalTwoPoints[1],lastPos))
+        std::swap(finalTwoPoints[0],finalTwoPoints[1]);
 
     for (int var = 2; var < finalPoints.count(); ++var)
     {
-        if(QLineF(finalPoints[var],lastPos).length()<QLineF(finalTwoPoints[1],lastPos).length())finalTwoPoints[1]=finalPoints[var];
+        if(sf::GetDistanceBetweenPoints(finalPoints[var],lastPos)<sf::GetDistanceBetweenPoints(finalTwoPoints[1],lastPos))
+            finalTwoPoints[1]=finalPoints[var];
 
-        if(QLineF(finalTwoPoints[0],lastPos).length()>QLineF(finalTwoPoints[1],lastPos).length()) std::swap(finalTwoPoints[0],finalTwoPoints[1]);
+        if(sf::GetDistanceBetweenPoints(finalTwoPoints[0],lastPos)>sf::GetDistanceBetweenPoints(finalTwoPoints[1],lastPos))
+            std::swap(finalTwoPoints[0],finalTwoPoints[1]);
     }
 
     qDebug()<<"*------------------------------------------------*";
-    qDebug()<<"line dist : "<<QLineF(finalTwoPoints[0],lastPos).length()<<"   "<<QLineF(finalTwoPoints[1],lastPos).length();
-    qDebug()<<"btw dist: "<<QLineF(finalTwoPoints[1],finalTwoPoints[0]).length();
-    qDebug()<<"main dist : "<<QLineF(QLineF(finalTwoPoints[1],finalTwoPoints[0]).center(),lastPos).length();
+    qDebug()<<"line dist : "<<sf::GetDistanceBetweenPoints(finalTwoPoints[0],lastPos)<<"   "<<sf::GetDistanceBetweenPoints(finalTwoPoints[1],lastPos);
+    qDebug()<<"btw dist: "<<sf::GetDistanceBetweenPoints(finalTwoPoints[1],finalTwoPoints[0]);
+    qDebug()<<"main dist : "<<sf::GetDistanceBetweenPoints(QLineF(finalTwoPoints[1],finalTwoPoints[0]).center(),lastPos);
     qDebug()<<"*------------------------------------------------*";
 
 
