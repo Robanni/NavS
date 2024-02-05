@@ -128,80 +128,10 @@ void DrawingPlane::CalculateIntersection()
     if(_trajectoryPoints.size() < 4)return;
 
     QVector2D vecOne;
-    QPointF lastPos = _trajectoryPoints.last();
-    QVector2D vecTwo =  QVector2D(_trajectoryPoints[_trajectoryPoints.count()-2].x()-lastPos.x(),
-                                 _trajectoryPoints[_trajectoryPoints.count()-2].y()-lastPos.y());
+    QPointF A11 = _trajectoryPoints.last();
+    QPointF A12 = _trajectoryPoints[_trajectoryPoints.count()-2];
 
-    QVector<QPointF> finalPoints;
-
-
-    QPointF finalTwoPoints[2];
-
-
-    double cosB;
-
-    for (int var = 0; var < _trajectoryPoints.count() - 2; ++var)
-    {
-        vecOne = QVector2D(_trajectoryPoints[var].x()-lastPos.x(),_trajectoryPoints[var].y()-lastPos.y());
-
-        cosB = (vecOne.x()*vecTwo.x() + vecOne.y()*vecTwo.y())
-                 /(vecOne.length()*vecTwo.length());
-
-        /*if(cosB!=1){
-        qDebug()<<"last pos:  "<<lastPos;
-        qDebug()<<"vec one:  "<<vecOne;
-        qDebug()<<"vec two:  "<<vecTwo;
-        qDebug()<<"cos:  "<< cosB;
-        }*/
-        if(cosB >= -0.4 && cosB <= 0.4) finalPoints.append(_trajectoryPoints[var]);
-
-
-    }
-    qDebug()<<"**************************************************";
-    qDebug()<<finalPoints.count();
-    qDebug()<<"**************************************************";
-
-
-
-    if(finalPoints.count()<2)return;
-
-    finalPoints[0] = finalTwoPoints[0];
-    finalPoints[1] = finalTwoPoints[1];
-
-    if(sf::GetDistanceBetweenPoints(finalTwoPoints[0],lastPos) > sf::GetDistanceBetweenPoints(finalTwoPoints[1],lastPos))
-        std::swap(finalTwoPoints[0],finalTwoPoints[1]);
-
-    for (int var = 2; var < finalPoints.count(); ++var)
-    {
-        if(sf::GetDistanceBetweenPoints(finalPoints[var],lastPos)<sf::GetDistanceBetweenPoints(finalTwoPoints[1],lastPos))
-            finalTwoPoints[1]=finalPoints[var];
-
-        if(sf::GetDistanceBetweenPoints(finalTwoPoints[0],lastPos)>sf::GetDistanceBetweenPoints(finalTwoPoints[1],lastPos))
-            std::swap(finalTwoPoints[0],finalTwoPoints[1]);
-    }
-
-    qDebug()<<"*------------------------------------------------*";
-    qDebug()<<"line dist : "<<sf::GetDistanceBetweenPoints(finalTwoPoints[0],lastPos)<<"   "<<sf::GetDistanceBetweenPoints(finalTwoPoints[1],lastPos);
-    qDebug()<<"btw dist: "<<sf::GetDistanceBetweenPoints(finalTwoPoints[1],finalTwoPoints[0]);
-    qDebug()<<"main dist : "<<sf::GetDistanceBetweenPoints(QLineF(finalTwoPoints[1],finalTwoPoints[0]).center(),lastPos);
-    qDebug()<<"*------------------------------------------------*";
-
-
-    /* линейная инторполяция(не работает)
-    double a=0,b=0,dist=0;
-    a = (finalTwoPoints[1].y() - finalTwoPoints[0].y())/(finalTwoPoints[1].x() - finalTwoPoints[0].x());
-
-    b = finalTwoPoints[0].y() - a;
-    qDebug()<<"a = "<<a;
-    qDebug()<<"b = "<<b;
-
-    dist = abs(finalTwoPoints[1].x()-finalTwoPoints[0].x());
-    QPointF last = finalTwoPoints[0];
-    for (int var = 1; var < 10; var++)
-    {
-        qDebug()<<"y = "<<a*(finalTwoPoints[0].x() + dist*var) + b << "      x ="<<finalTwoPoints[0].x() + dist*var;
-    }
-    */
+    qDebug()<<sf::GetNormalPointTwo(A11,A12,true)<<sf::GetNormalPointTwo(A11,A12,false);
 }
 
 // slots
