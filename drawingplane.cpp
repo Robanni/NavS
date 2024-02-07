@@ -46,8 +46,15 @@ void DrawingPlane::paintEvent(QPaintEvent *)
     QPainter painter;
     painter.begin(this);
 
-    for(auto var:_trajectoryArea){
+    for(auto var:_trajectoryArea)
+    {
         painter.drawLine(var);
+    }
+    QPen pen(Qt::red,5);
+    painter.setPen(pen);
+    for(auto var:_crossPoints)
+    {
+        painter.drawPoint(var);
     }
 
     painter.end();
@@ -125,13 +132,23 @@ void DrawingPlane::DrawGuidanceLines()
 
 void DrawingPlane::CalculateIntersection()
 {
-    if(_trajectoryPoints.size() < 4)return;
+    if(_trajectoryPoints.size() < 7)return;
 
     QVector2D vecOne;
     QPointF A11 = _trajectoryPoints.last();
     QPointF A12 = _trajectoryPoints[_trajectoryPoints.count()-2];
 
-    qDebug()<<sf::GetNormalPointTwo(A11,A12,true)<<sf::GetNormalPointTwo(A11,A12,false);
+    A12 = sf::GetUnitVecPointTwo(A11,sf::GetNormalPointTwo(A11,A12,true));
+    A12 = A12- A11;
+
+    A12*=_crossbarLenght;
+    A12+=A11;//final second point
+
+    for (int var = 1; var < _trajectoryPoints.count()-5; ++var)
+    {
+        QPointF f = sf::SegmentsCrossingPos(A11,A12,_trajectoryPoints[var-1],_trajectoryPoints[var]);
+        if(f!=QPointF(0,0))_crossPoints.append(f);
+    }
 }
 
 // slots

@@ -19,8 +19,10 @@ public:
 private:
     const QSize _planeSize = QSize(1000,1000);
     QRect _tractor = QRect(0,0,20,20);
+
     QVector<QPointF> _trajectoryPoints;
     QVector<QLineF> _trajectoryArea;
+    QVector<QPointF> _crossPoints;
     float _crossbarLenght = 70;
     bool _isWork = false;
     QPainter _guidanceLinesPainter;
