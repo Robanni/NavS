@@ -4,6 +4,7 @@
 #include <QPoint>
 #include <QPointF>
 #include <QVector2D>
+#include <QDebug>
 
 
 namespace sf
@@ -49,94 +50,38 @@ QPointF GetUnitVecPointTwo(QPointF p1, QPointF p2)
     return QPointF(x+p1.x(),y+p1.y());
 }
 
+bool RangeIntersection(float r1,float r2,float r3,float r4)
+{
+    if(r1>r2) std::swap(r1,r2);
+    if(r3>r4) std::swap(r3,r4);
+
+    return std::max(r1,r3)<= std::min(r2,r4);
+}
+
 QPointF SegmentsCrossingPos(QPointF p1,QPointF p2,QPointF p3, QPointF p4)
 {
-    float L1, sin_alf, cos_alf, wsp1, wsp2, beta;
-    bool flag_cross = false;
-    QPointF CR;
 
-    QPointF p1_copy = p1;
-    QPointF p2_copy = p2;
-    QPointF p3_copy = p3;
-    QPointF p4_copy = p4;
-
-    p1 = QPointF(0,0);
-
-    p2-=p1_copy;
-    p3-=p1_copy;
-    p4-=p1_copy;
-
-    L1 = sqrt(pow(p2.x(),2)+pow(p2.y(),2));
-    if(L1>0)
+    if(RangeIntersection(p1.x(),p2.x(),p3.x(),p4.x())&&RangeIntersection(p1.y(),p2.y(),p3.y(),p4.y()))
     {
-        sin_alf = p2.x()/L1;
-        cos_alf = p2.y()/L1;
-    }
-    else
-    {
-        sin_alf = 0;
-        cos_alf = 0;
-    }
 
-    p2 = QPointF(0,L1);
+        QVector2D v(p2-p1);
+        QVector2D v1(p3-p1);
+        QVector2D v2(p4-p1);
 
-    wsp1 = p3.x()*cos_alf-p3.y()*sin_alf;
-    wsp2 = p3.x()*cos_alf+p3.y()*sin_alf;
-    p3 = QPointF(wsp1,wsp2);
+        float Z1 = v1.x()*v.y() - v.x()*v1.y();
+        float Z2 = v2.x()*v.y() - v.x()*v2.y();
 
-    wsp1 = p4.x()*cos_alf-p4.y()*sin_alf;
-    wsp2 = p4.x()*cos_alf+p4.y()*sin_alf;
-    p4 = QPointF(wsp1,wsp2);
+        if(Z1*Z2>0)return QPointF(0,0);
 
-    if (p3.x() - p4.x() == 0) { // отрезок {P3,P4) параллелен {P0,P1)
-        if( p3.x() == 0 && p4.x() == 0) {
+        float px = p3.x()+(p4.x()-p3.x())*(abs(Z1)/abs(Z2-Z1));
+        float py = p3.y()+(p4.y()-p3.y())*(abs(Z1)/abs(Z2-Z1));
 
-            if( p3.y() >= 0 && p3.y() <= L1)
-            {
-                flag_cross = true;
-                CR = p3_copy;
-            }
-
-            if(p4.y() >= 0 && p4.y() <= L1)
-            {
-                flag_cross = true;
-                CR =p4_copy;
-            }
-
-            if((p3.y() < 0 && p4.y() > L1) || (p4.y() < 0 && p3.y() > L1))
-            {
-                flag_cross = true;
-                CR = p1_copy;
-            }
-        }
-    }
-    else {
-        beta = p3.x() / (p3.x() - p4.x());
-
-        if (beta >= 0 && beta <= 1 )
-        {
-
-            CR = QPointF(0,p3.y() + (p4.y()-p3.y())*beta);
-
-            if (CR.y() >= 0 && CR.y() <= L1)
-            {
-
-                flag_cross = true;
-                wsp1 = CR.x()*cos_alf + CR.y()*sin_alf;
-                wsp2 = CR.y()*cos_alf - CR.x()*sin_alf;
-                CR = QPointF(wsp1,wsp2);
-                CR = QPointF(CR.x() + p1_copy.x(),CR.y() + p1_copy.y());
-            }
-        }
+        return QPointF(px,py);
     }
 
-    if(flag_cross)
-    {
-        return CR;
-    }
     return QPointF(0,0);
-
 }
+
 
 }
 
