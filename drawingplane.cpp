@@ -148,7 +148,32 @@ void DrawingPlane::CalculateIntersection()
     {
 
         QPointF f =sf::SegmentsCrossingPos(A11,A12,_trajectoryPoints[var-1],_trajectoryPoints[var]);
-        if(f!=QPointF(0,0))_crossPoints.append(f);
+        if(f!=QPointF(0,0))
+        {
+            _crossPoints.append(f);
+            qDebug()<<"Distance to crossing point:"<<sf::GetDistanceBetweenPoints(A11,f);
+            qDebug()<<"Result:"<<sf::GetDistanceBetweenPoints(A11,A12/2)/sf::GetDistanceBetweenPoints(A11,f);
+        }
+    }
+
+    A12 = _trajectoryPoints[_trajectoryPoints.count()-2];
+
+    A12 = sf::GetUnitVecPointTwo(A11,sf::GetNormalPointTwo(A11,A12,false));
+    A12 = A12- A11;
+
+    A12*=_crossbarLenght;
+    A12+=A11;//final second point
+
+    for (int var = 1; var < _trajectoryPoints.count()-4; ++var)
+    {
+
+        QPointF f =sf::SegmentsCrossingPos(A11,A12,_trajectoryPoints[var-1],_trajectoryPoints[var]);
+        if(f!=QPointF(0,0))
+        {
+            _crossPoints.append(f);
+            qDebug()<<"Distance to crossing point:"<<sf::GetDistanceBetweenPoints(A11,f);
+            qDebug()<<"Result:"<<sf::GetDistanceBetweenPoints(A11,A12/2)/sf::GetDistanceBetweenPoints(A11,f);
+        }
     }
 }
 
